@@ -25,9 +25,10 @@ const searchArticles = async (textToSearchFor) => {
   return data;
 };
 
-const addArticle = (articleObject) => {
+const addArticle = (articleObject, token) => {
   return fetch(BASE_URL, {
     headers: {
+      'Authorization': token,
       'Content-Type': 'application/json'
     },
     method: "POST",
