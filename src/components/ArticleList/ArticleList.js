@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import ArticleTeaser from '../ArticleTeaser/ArticleTeaser.js';
-import { ListGroup, ListGroupItem } from 'reactstrap';
+import React, { Component } from "react";
+import ArticleTeaser from "../ArticleTeaser/ArticleTeaser.js";
+import { ListGroup, ListGroupItem } from "reactstrap";
 
 class ArticleList extends Component {
   render() {
     const { articles } = this.props;
     return (
       <ListGroup>
-        { articles.map((article, index) => (
-          <ListGroupItem>
-            <ArticleTeaser { ...article } id={ index + 1 } />
+        {articles.map((article, index) => (
+          <ListGroupItem key={article.id}>
+            <ArticleTeaser {...article} id={index + 1} />
           </ListGroupItem>
         ))}
       </ListGroup>
@@ -18,7 +18,6 @@ class ArticleList extends Component {
 }
 
 export default ArticleList;
-
 
 // Functional solution:
 // function ArticleList({ articles }) {
