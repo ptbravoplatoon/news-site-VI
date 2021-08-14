@@ -1,14 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useContext } from 'react';
 import { addArticle } from '../api/ArticlesAPI';
 import { Redirect } from 'react-router-dom';
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import UserContext from '../context/UserContext.js'
+// import UserContext from '../context/UserContext';
 
-class AddArticlePage extends Component {
-  state = {
-    redirect: false
-  }
+const AddArticlePage = (props) => {
+  const [redirect, setRedirect] = useState(false)
+  const userContext = useContext(UserContext);
+  const authToken = userContext.user.id;
 
-  handleFormSubmit = async (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
     const articleObject = {
       title: event.target.elements[0].value,
@@ -17,10 +19,10 @@ class AddArticlePage extends Component {
     }
 
     try {
-      const response = await addArticle(articleObject);
+      const response = await addArticle(articleObject, authToken);
       if (response.status === 200) {
         // redirect the user back to Home Page upon successful POST
-        this.setState({ redirect: true });
+        setRedirect(true);
       } else {
         const jsonData = await response.json();
         alert(jsonData.error.message);
@@ -30,33 +32,29 @@ class AddArticlePage extends Component {
     }
   }
 
-  render() {
-    if (this.state.redirect) {
-      return <Redirect to='/' />
-    }
 
-    return (
-      <div style={{ padding: '20px' }}>
-        <h3> Add an Article </h3>
-        <Form onSubmit={this.handleFormSubmit}>
-          <FormGroup>
-            <Label for="title">Title</Label>
-            <Input type="text" name="title" id="title" />
-          </FormGroup>
-          <FormGroup>
-            <Label for="byline">Byline</Label>
-            <Input type="text" name="byline" id="byline" />
-          </FormGroup>
-          <FormGroup>
-            <Label for="abstract">Abstract</Label>
-            <Input type="textarea" name="abstract" id="abstract" />
-          </FormGroup>
-          <Button>Submit</Button>
-        </Form>
-      </div>
-    )
-  }
+  return redirect ? <Redirect to='/' /> :  (
+    <div style={{ padding: '20px' }}>
+      <h3> Add an Article </h3>
+      <Form onSubmit={handleFormSubmit}>
+        <FormGroup>
+          <Label for="title">Title</Label>
+          <Input type="text" name="title" id="title" />
+        </FormGroup>
+        <FormGroup>
+          <Label for="byline">Byline</Label>
+          <Input type="text" name="byline" id="byline" />
+        </FormGroup>
+        <FormGroup>
+          <Label for="abstract">Abstract</Label>
+          <Input type="textarea" name="abstract" id="abstract" />
+        </FormGroup>
+        <Button>Submit</Button>
+      </Form>
+    </div>
+  )
 }
+
 
 export default AddArticlePage;
 
