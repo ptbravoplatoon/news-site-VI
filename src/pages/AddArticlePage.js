@@ -1,23 +1,24 @@
-import React, { Component } from 'react';
-import { addArticle } from '../api/ArticlesAPI';
-import { Redirect } from 'react-router-dom';
-import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import React, { Component } from "react";
+import { addArticle } from "../api/ArticlesAPI";
+import { Redirect } from "react-router-dom";
+import { Button, Form, FormGroup, Input, Label } from "reactstrap";
+import UserContext from "../contexts/UserContext";
 
 class AddArticlePage extends Component {
   state = {
-    redirect: false
-  }
+    redirect: false,
+  };
 
-  handleFormSubmit = async (event) => {
+  handleFormSubmit = async (event, userContext) => {
     event.preventDefault();
     const articleObject = {
       title: event.target.elements[0].value,
       byline: event.target.elements[1].value,
-      abstract: event.target.elements[2].value
-    }
+      abstract: event.target.elements[2].value,
+    };
 
     try {
-      const response = await addArticle(articleObject);
+      const response = await addArticle(articleObject, userContext.user.id);
       if (response.status === 200) {
         // redirect the user back to Home Page upon successful POST
         this.setState({ redirect: true });
@@ -26,40 +27,47 @@ class AddArticlePage extends Component {
         alert(jsonData.error.message);
       }
     } catch (err) {
-      console.error('error occurred posting article: ', err);
+      console.error("error occurred posting article: ", err);
     }
-  }
+  };
 
   render() {
     if (this.state.redirect) {
-      return <Redirect to='/' />
+      return <Redirect to="/" />;
     }
 
     return (
-      <div style={{ padding: '20px' }}>
-        <h3> Add an Article </h3>
-        <Form onSubmit={this.handleFormSubmit}>
-          <FormGroup>
-            <Label for="title">Title</Label>
-            <Input type="text" name="title" id="title" />
-          </FormGroup>
-          <FormGroup>
-            <Label for="byline">Byline</Label>
-            <Input type="text" name="byline" id="byline" />
-          </FormGroup>
-          <FormGroup>
-            <Label for="abstract">Abstract</Label>
-            <Input type="textarea" name="abstract" id="abstract" />
-          </FormGroup>
-          <Button>Submit</Button>
-        </Form>
-      </div>
-    )
+      <UserContext.Consumer>
+        {(userContext) => (
+          <div style={{ padding: "20px" }}>
+            <h3> Add an Article </h3>
+            <Form
+              onSubmit={(event, userContext) =>
+                this.handleFormSubmit(event, userContext)
+              }
+            >
+              <FormGroup>
+                <Label for="title">Title</Label>
+                <Input type="text" name="title" id="title" />
+              </FormGroup>
+              <FormGroup>
+                <Label for="byline">Byline</Label>
+                <Input type="text" name="byline" id="byline" />
+              </FormGroup>
+              <FormGroup>
+                <Label for="abstract">Abstract</Label>
+                <Input type="textarea" name="abstract" id="abstract" />
+              </FormGroup>
+              <Button>Submit</Button>
+            </Form>
+          </div>
+        )}
+      </UserContext.Consumer>
+    );
   }
 }
 
 export default AddArticlePage;
-
 
 // Functional solution:
 // function AddArticlePage() {

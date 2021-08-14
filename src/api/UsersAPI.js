@@ -1,15 +1,17 @@
 const BASE_URL = "http://localhost:3001/api/users/";
 
 const login = async (credentialsObject) => {
-  const endpoint = `${BASE_URL}/login?include=user-${JSON.stringify(
+  const requestEndpoint = `${BASE_URL}/login?include=user-${JSON.stringify(
     credentialsObject
   )}`;
-  const context = {
+  const requestInfo = {
     headers: { "Content-Type": "application/json" },
     method: "POST",
     body: JSON.stringify(credentialsObject),
   };
-  return fetch(endpoint, context);
+  const response = await fetch(requestEndpoint, requestInfo);
+  const data = await response.json();
+  return data;
 };
 
 export { login };
