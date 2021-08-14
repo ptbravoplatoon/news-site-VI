@@ -1,12 +1,22 @@
 import React, { Component } from 'react';
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap';
+import { login } from '../api/UsersAPI';
 
 class LoginPage extends Component {
 
-  handleFormSubmit = (event) => {
+  handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log(event.target.elements[0].value);
-    console.log(event.target.elements[1].value);
+    const credentialsObject = {
+      // email: "john@doe.com",
+      // password: "opensesame"
+      email: event.target.elements[0].value,
+      password: event.target.elements[1].value
+    }
+
+    const response = await login(credentialsObject)
+    this.props.handleLogin(response)
+    this.props.history.push('/')
+    console.log(response)
   };
 
   render() {
