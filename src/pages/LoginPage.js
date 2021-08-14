@@ -1,12 +1,34 @@
 import React, { Component } from 'react';
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap';
+import UsersAPI from '../api/UsersAPI'
 
 class LoginPage extends Component {
 
-  handleFormSubmit = (event) => {
+  state = {
+    email: null,
+    password: null,
+  }
+
+  handleChange = (event) => {
+    const name = event.target.name
+    const value = event.target.value
+
+    if (name === 'email') {
+      this.setState({email: value})
+    } else if (name === 'password') {
+      this.setState({password: value})
+    }
+  }
+
+  handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log(event.target.elements[0].value);
-    console.log(event.target.elements[1].value);
+    const credentialsObject = {
+      email: this.state.email,
+      password: this.state.password
+    }
+    const user = await UsersAPI.login(credentialsObject)
+    this.props.handleLogin(user)
+    this.props.history.push('/')
   };
 
   render() {
@@ -16,11 +38,11 @@ class LoginPage extends Component {
         <Form onSubmit={this.handleFormSubmit}>
           <FormGroup>
             <Label for="email">Email</Label>
-            <Input type="email" name="email" id="email" />
+            <Input type="email" name="email" id="email" onChange={(event) => this.handleChange(event)} />
           </FormGroup>
           <FormGroup>
             <Label for="password">Password</Label>
-            <Input type="password" name="password" id="password" />
+            <Input type="password" name="password" id="password" onChange={(event) => this.handleChange(event)} />
           </FormGroup>
           <Button>Submit</Button>
         </Form>
